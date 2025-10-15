@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Plan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Menu -->
+    <nav class="menu">
+        <div class="hamburger">☰</div>
+        <ul id="menu-items">
+            <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+            <li><a href="#smart-diagnostics">Smart Diagnostics</a></li>
+            <li><a href="#">Upload Files</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Maintenance Plan</h1>
+    </header>
+
+    <section class="section-wrapper">
+        <div class="container">
+            {% for transformer, plan in plans.items() %}
+                <div class="maintenance-plan">
+                    <h2>Transformer: {{ transformer }}</h2>
+                    <p><strong>Type:</strong> {{ plan.type }}</p>
+                    <p><strong>Issues/Faults:</strong> {{ plan.issues }}</p>
+                    <p><strong>Possible Causes:</strong> {{ plan.causes }}</p>
+                    <p><strong>How to Fix:</strong> {{ plan.fixes }}</p>
+                    <p><strong>Required Tools:</strong> {{ plan.tools }}</p>
+                </div>
+            {% endfor %}
+            <h3>Thought Process:</h3>
+            <ul>
+                {% for step in thought_process %}
+                    <li>{{ step }}</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ url_for('download_plan') }}" class="download-button">Download Plan</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2025 All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Menu -->
+    <nav class="menu">
+        <div class="hamburger">☰</div>
+        <ul id="menu-items">
+            <li><a href="{{ url_for('index') }}">Dashboard</a></li>
+            <li><a href="#smart-diagnostics">Smart Diagnostics</a></li>
+            <li><a href="#">Upload Files</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Prompt Engineering</h1>
+    </header>
+
+    <section class="section-wrapper">
+        <div class="container">
+            <form method="POST">
+                <textarea name="custom_prompt" rows="5" cols="50" placeholder="Enter custom prompt (e.g., 'Use RAG for maintenance questions')"></textarea>
+                <button type="submit">Save Prompt</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2025 All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

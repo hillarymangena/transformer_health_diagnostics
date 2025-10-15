@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Health and Diagnostics</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Menu -->
+    <nav class="menu">
+        <div class="hamburger">☰</div>
+        <ul id="menu-items">
+            <li><a href="#dashboard" class="active">Dashboard</a></li>
+            <li><a href="#smart-diagnostics">Smart Diagnostics</a></li>
+            <li><a href="#">Upload Files</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <h1>Transformer Health and Diagnostics</h1>
+        <div id="datetime"></div>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section class="section-wrapper" id="dashboard">
+        <div class="container">
+            <!-- Alerts Section -->
+            <section class="alerts">
+                <h2>Alerts</h2>
+                <div id="alerts-container"></div>
+            </section>
+            <!-- Real-Time Monitoring Section -->
+            <section class="monitoring">
+                <h2>Real Time Monitoring</h2>
+                <div class="key">
+                    <span class="key-item"><span class="color-box tx1"></span>TX1 - Midrand</span>
+                    <span class="key-item"><span class="color-box tx2"></span>TX2 - Birch Acres</span>
+                    <span class="key-item"><span class="color-box tx3"></span>TX3 - Kempton West</span>
+                </div>
+                <div class="graph-row">
+                    <div class="graph-container">
+                        <canvas id="currentChart"></canvas>
+                    </div>
+                    <div class="graph-container">
+                        <canvas id="voltageChart"></canvas>
+                    </div>
+                </div>
+                <div class="graph-row">
+                    <div class="graph-container">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                    <div class="graph-container">
+                        <canvas id="vibrationsChart"></canvas>
+                    </div>
+                </div>
+                <div class="graph-row">
+                    <div class="graph-container">
+                        <canvas id="dgaChart"></canvas>
+                    </div>
+                    <div class="graph-container">
+                        <canvas id="moistureChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- Smart Diagnostics Section -->
+    <section class="section-wrapper smart-diagnostics-header" id="smart-diagnostics">
+        <header class="section-header">
+            <h1>Smart Diagnostics</h1>
+        </header>
+        <div class="container">
+            <!-- Copilot Section -->
+            <section class="copilot">
+                <h2>Copilot</h2>
+                <div id="chat-window">
+                    <div id="chat-messages">
+                        <p>Chat will appear here...</p>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-input" placeholder="Ask about transformer diagnostics...">
+                        <button id="send-message">Send</button>
+                    </div>
+                </div>
+            </section>
+            <!-- Maintenance Planning Section -->
+            <section class="maintenance">
+                <h2>Maintenance Planning</h2>
+                <h3>Fleet Performance Summary</h3>
+                <div id="fleet-summary">
+                    <p>This is a placeholder summary of the transformer fleet's performance. The fleet includes TX1 (Midrand), TX2 (Birch Acres), and TX3 (Kempton West). Current status shows mostly normal operations, with some units experiencing minor temperature or vibration alerts. Detailed insights will follow with backend integration.</p>
+                </div>
+                <button id="generate-plan">Generate Maintenance Plan</button>
+            </section>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>© 2025 All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="/static/script.js"></script>
+    <script>
+        // WebSocket for real-time data
+        const ws = new WebSocket('ws://localhost:5000/api/alerts');
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            updateGraphs(data.transformers);
+            updateAlerts(data.transformers);
+        };
+
+        // Upload functionality
+        document.querySelector('nav ul li:last-child a').addEventListener('click', function(e) {
+            e.preventDefault();
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = function(e) {
+                const formData = new FormData();
+                formData.append('file', e.target.files[0]);
+                fetch('/upload', { method: 'POST', body: formData })
+                    .then(response => response.json())
+                    .then(data => alert(data.message || data.error))
+                    .catch(error => alert('Upload failed: ' + error));
+            };
+            input.click();
+        });
+
+        // Chat functionality
+        document.getElementById('send-message').addEventListener('click', function() {
+            const input = document.getElementById('chat-input').value;
+            if (!input) return;
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML += `<p><strong>You:</strong> ${input}</p>`;
+            chatMessages.innerHTML += '<p><strong>AI:</strong> ...'; // Thinking indicator
+            fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: input })
+            })
+            .then(response => response.json())
+            .then(data => {
+                chatMessages.lastChild.textContent = `${chatMessages.lastChild.textContent.slice(0, -3)} ${data.response}`;
+            })
+            .catch(error => chatMessages.lastChild.textContent = 'Error: ' + error);
+            document.getElementById('chat-input').value = '';
+        });
+
+        // Maintenance Plan button
+        document.getElementById('generate-plan').addEventListener('click', function() {
+            window.location.href = '/generate_maintenance_plan';
+        });
+
+        // Graph and alert updates (placeholder, assume implemented in script.js)
+        function updateGraphs(transformers) {
+            // Update Chart.js graphs with transformers data
+            // This should match your existing script.js logic
+        }
+
+        function updateAlerts(transformers) {
+            // Update alerts container
+            // This should match your existing script.js logic
+        }
+
+        // Update datetime
+        function updateDateTime() {
+            const datetimeDiv = document.getElementById('datetime');
+            const now = new Date();
+            datetimeDiv.textContent = now.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg', hour12: true });
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+</body>
+</html>
