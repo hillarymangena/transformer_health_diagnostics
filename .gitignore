@@ -1,0 +1,8 @@
+venv/
+*.db
+__pycache__/
+*.pyc
+.env
+chroma_db/
+maintenance_plan.txt
+prompts.txt
